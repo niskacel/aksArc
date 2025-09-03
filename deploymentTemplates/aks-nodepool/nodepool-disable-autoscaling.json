@@ -1,0 +1,52 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "provisionedClusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the provisioned cluster"
+            }
+        },
+        "agentName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the agent pool (nodepool)"
+            }
+        },
+        "agentVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A4_v2",
+            "metadata": {
+                "description": "VM size for the nodepool (must match existing size)"
+            }
+        },
+        "agentOsType": {
+            "type": "string",
+            "defaultValue": "Linux",
+            "metadata": {
+                "description": "OS type for the nodepool"
+            }
+        },
+        "agentCount": {
+            "type": "int",
+            "defaultValue": 2,
+            "metadata": {
+                "description": "Fixed number of nodes when autoscaling is disabled"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.HybridContainerService/provisionedClusterInstances/agentPools",
+            "apiVersion": "2024-01-01",
+            "name": "[concat(parameters('provisionedClusterName'), '/default/', parameters('agentName'))]",
+            "properties": {
+                "osType": "[parameters('agentOsType')]",
+                "vmSize": "[parameters('agentVMSize')]",
+                "enableAutoScaling": false,
+                "count": "[parameters('agentCount')]"
+            }
+        }
+    ]
+}

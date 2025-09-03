@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "clusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the AKS Arc cluster"
+            }
+        },
+        "nodepoolName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the nodepool to update"
+            }
+        },
+        "nodeCount": {
+            "type": "int",
+            "defaultValue": 3,
+            "minValue": 1,
+            "maxValue": 100,
+            "metadata": {
+                "description": "The new number of nodes for the nodepool"
+            }
+        },
+        "customLocationId": {
+            "type": "string",
+            "metadata": {
+                "description": "Resource ID of the custom location"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.HybridContainerService/provisionedClusterInstances/agentPools",
+            "apiVersion": "2024-01-01",
+            "name": "[concat('default/', parameters('nodepoolName'))]",
+            "scope": "[concat('Microsoft.Kubernetes/connectedClusters/', parameters('clusterName'))]",
+            "properties": {
+                "count": "[parameters('nodeCount')]"
+            },
+            "extendedLocation": {
+                "name": "[parameters('customLocationId')]",
+                "type": "CustomLocation"
+            }
+        }
+    ],
+    "outputs": {
+        "nodepoolName": {
+            "type": "string",
+            "value": "[parameters('nodepoolName')]"
+        },
+        "newNodeCount": {
+            "type": "int",
+            "value": "[parameters('nodeCount')]"
+        }
+    }
+}
